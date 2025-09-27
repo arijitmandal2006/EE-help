@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resistance Calculator</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+   <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/1482/1482822.png" type="image/png">
+<link rel="stylesheet" href="style.css">
+ <script src="script.js"></script>
+</head>
+<body class="dark min-h-screen">
+    <div class="container mx-auto p-4 md:p-8">
+        <!-- Header -->
+        <header class="text-center py-4 mb-8">
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight">
+                <span class="text-blue-400"> Resistance </span>Calculator
+            </h1>
+            <p class="mt-2 text-lg text-gray-400">
+                Determine resistance and tolerance visually.
+            </p>
+        </header>
+
+        <!-- Main Content Grid -->
+        <main class="grid lg:grid-cols-2 gap-8 lg:gap-12 bg-gray-800 p-6 md:p-10 rounded-xl shadow-2xl">
+            
+            <!-- Left Side: Resistor Visualization -->
+            <section class="flex flex-col items-center justify-center p-4 border-2 border-gray-700 rounded-lg">
+                <h2 class="text-xl font-semibold mb-6 text-gray-300">The Resistor</h2>
+                
+                <!-- Resistor Drawing Area -->
+                <div class="w-full max-w-lg h-24 flex items-center justify-center relative my-4">
+                    <!-- Lead 1 -->
+                    <div class="h-1 w-1/4 absolute left-0 resistor-end" style="border-radius: 9999px;"></div>
+                    <!-- Resistor Body -->
+                    <div id="resistorBody" class="resistor-body h-12 w-3/4 rounded-full relative z-10 shadow-lg flex items-center" style="max-width: 400px;">
+                        
+                        <!-- Color Bands (Absolute Positioned) -->
+                        <div id="band1" class="color-band color-none"></div>
+                        <div id="band2" class="color-band color-none"></div>
+                        <div id="band3" class="color-band color-none"></div>
+                        <div id="band4" class="color-band color-none"></div>
+                        <div id="band5" class="color-band color-none"></div>
+
+                    </div>
+                    <!-- Lead 2 -->
+                    <div class="h-1 w-1/4 absolute right-0 resistor-end" style="border-radius: 9999px;"></div>
+                </div>
+
+                <!-- Mode Selector and Reset Button -->
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mt-8">
+                    <div class="select-wrapper">
+                        <!-- Removed dark: prefix since we are permanently dark -->
+                        <select id="bandMode" onchange="toggleBandMode(this.value)" class="select-band bg-gray-700 border border-gray-600 rounded-lg p-3 font-medium hover:ring-2 hover:ring-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-300">
+                            <option value="4">4-Band Resistor </option>
+                            <option value="5">5-Band Resistor </option>
+                        </select>
+                    </div>
+                    <button id="resetButton" onclick="resetCalculator()" class="flex-shrink-0 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200 shadow-md hover:shadow-lg">
+                        Reset
+                    </button>
+                </div>
+            </section>
+            
+            <!-- Right Side: Controls and Output -->
+            <section class="p-4 space-y-8">
+                
+                <!-- Color Selection Controls -->
+                <div id="colorControls" class="grid md:grid-cols-2 gap-4">
+                    
+                    <!-- Band 1 -->
+                    <div class="flex flex-col space-y-1">
+                        <label for="selectBand1" class="font-semibold text-gray-300">Band 1 (Digit)</label>
+                        <div class="select-wrapper">
+                            <select id="selectBand1" data-band="1" onchange="updateBands(this)" class="select-band p-3 border border-gray-600 bg-gray-700 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-300"></select>
+                        </div>
+                    </div>
+
+                    <!-- Band 2 -->
+                    <div class="flex flex-col space-y-1">
+                        <label for="selectBand2" class="font-semibold text-gray-300">Band 2 (Digit)</label>
+                        <div class="select-wrapper">
+                            <select id="selectBand2" data-band="2" onchange="updateBands(this)" class="select-band p-3 border border-gray-600 bg-gray-700 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-300"></select>
+                        </div>
+                    </div>
+
+                    <!-- Band 3 (Digit/Multiplier - visibility changes based on mode) -->
+                    <!-- This control is correctly hidden/shown by JS in toggleBandMode() -->
+                    <div id="band3Control" class="flex flex-col space-y-1 transition-all duration-300">
+                        <label for="selectBand3" class="font-semibold text-gray-300">Band 3 (<span id="band3Label">Digit</span>)</label>
+                        <div class="select-wrapper">
+                            <select id="selectBand3" data-band="3" onchange="updateBands(this)" class="select-band p-3 border border-gray-600 bg-gray-700 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-300"></select>
+                        </div>
+                    </div>
+                    
+                    <!-- Band 4 (Multiplier/Tolerance - label changes based on mode) -->
+                    <div class="flex flex-col space-y-1">
+                        <label for="selectBand4" class="font-semibold text-gray-300"> <span id="band4Label"></span></label>
+                        <div class="select-wrapper">
+                            <select id="selectBand4" data-band="4" onchange="updateBands(this)" class="select-band p-3 border border-gray-600 bg-gray-700 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-300"></select>
+                        </div>
+                    </div>
+
+                    <!-- Band 5 (Tolerance) -->
+                    <div id="band5Control" class="flex flex-col space-y-1 md:col-span-2">
+                        <label for="selectBand5" class="font-semibold text-gray-300">Tolerance Band</label>
+                        <div class="select-wrapper">
+                            <select id="selectBand5" data-band="5" onchange="updateBands(this)" class="select-band p-3 border border-gray-600 bg-gray-700 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-300"></select>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Output Display -->
+                <div class="pt-4 border-t border-gray-700 space-y-4">
+                    <h2 class="text-2xl font-bold text-blue-400">Calculated Value</h2>
+                    
+                    <!-- Resistance Value -->
+                    <div class="p-4 rounded-lg shadow-inner flex flex-col sm:flex-row sm:justify-between sm:items-center bg-gradient-to-r from-gray-700 to-gray-900">
+                        <p class="text-lg font-medium">Nominal Resistance:</p>
+                        <p id="resistanceOutput" class="text-3xl font-extrabold text-blue-200 mt-2 sm:mt-0">
+                            ---
+                        </p>
+                    </div>
+                    
+                    <!-- Tolerance Percentage - Using attractive gradients -->
+                    <div class="p-4 rounded-lg shadow-inner flex flex-col sm:flex-row sm:justify-between sm:items-center bg-gradient-to-r from-gray-700 to-gray-900">
+                        <p class="text-lg font-medium">Tolerance:</p>
+                        <p id="toleranceOutput" class="text-2xl font-bold text-yellow-400 mt-2 sm:mt-0">
+                            ---
+                        </p>
+                    </div>
+                    
+                    <h3 class="text-xl font-bold text-gray-300 pt-2">Absolute Range</h3>
+                    
+                    <!-- Minimum Resistance Value - Using attractive gradients -->
+                    <div class="p-4 rounded-lg shadow-inner flex flex-col sm:flex-row sm:justify-between sm:items-center bg-gradient-to-r from-gray-700 to-gray-900">
+                        <p class="text-lg font-medium text-green-400">Minimum Resistance:</p>
+                        <p id="minResistanceOutput" class="text-2xl font-extrabold text-green-200 mt-2 sm:mt-0">
+                            ---
+                        </p>
+                    </div>
+
+                    <!-- Maximum Resistance Value - Using attractive gradients -->
+                    <div class="p-4 rounded-lg shadow-inner flex flex-col sm:flex-row sm:justify-between sm:items-center bg-gradient-to-r from-gray-700 to-gray-900">
+                        <p class="text-lg font-medium text-red-400">Maximum Resistance:</p>
+                        <p id="maxResistanceOutput" class="text-2xl font-extrabold text-red-200 mt-2 sm:mt-0">
+                            ---
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Explanation / Notes -->
+                <div class="pt-4 border-t border-gray-700">
+                    <h3 class="text-xl font-semibold mb-2 text-gray-300">Band Meanings</h3>
+                    <p id="explanationOutput" class="text-sm text-gray-400 leading-relaxed">
+                        Select colors for Band 1, Band 2, the Multiplier, and Tolerance to see the resistance value.
+                    </p>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="text-center mt-8 p-4 text-gray-400 text-sm">
+        Arijit Mandal <span class="text-red-500">⚡</span>  © 2025 All Rights Reserved
+    </footer>
+
+</body>
+</html>

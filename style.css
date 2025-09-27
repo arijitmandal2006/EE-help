@@ -1,0 +1,90 @@
+
+  
+        /* Consolidate custom properties for the permanent dark theme */
+        :root {
+            --resistor-body-color: #34343492;  /* Dark gray body */
+            --resistor-end-color: #77726e;   /* Darker gray end caps */
+            --shadow: 0 4px 6px -1px rgba(255, 255, 255, 0.05), 0 2px 4px -2px rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+         /* dark background */
+            background: linear-gradient(135deg, #030712 0%, #111827 100%); 
+            color: #ffff; 
+           
+        }
+
+        /* Resistor Body Styling  */
+        .resistor-body {
+            background-color: var(--resistor-body-color);
+            background-image: radial-gradient(circle at 70% 50%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 50%); /* Subtle highlight */
+            box-shadow: var(--shadow);
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        
+        /* Resistor End Cap Styling */
+        .resistor-end {
+            background-color: var(--resistor-end-color);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        /* Color Band Styling  */
+        .color-band {
+            transition: background-color 0.3s ease-in-out;
+            border-radius: 4px; 
+            position: absolute;
+            height: 100%;
+            width: 3%; 
+            opacity: 0.9;
+            transform: scaleY(0.95);
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3) inset;
+        }
+
+        /* Band Positions (from left to right) */
+        #band1 { left: 15%; }
+        #band2 { left: 25%; }
+        #band3 { left: 40%; }
+        /* The tolerance band is usually spaced further apart */
+        #band4 { left: 55%; }
+        #band5 { left: 85%; }
+        
+        /* Custom Select Styling */
+        .select-wrapper {
+            position: relative;
+        }
+        .select-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 1rem;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: inherit;
+        }
+        .select-band {
+            appearance: none;
+            padding-right: 2.5rem;
+            cursor: pointer;
+        }
+        /* Style for Select Options inside Dropdowns (ensuring text visibility) */
+        .select-band option {
+            background-color: #1f2937; /* Dark background for dropdown options */
+            color: #f3f4f6;
+        }
+
+        /* Tailwind Color Classes Mapping for JS */
+        .color-black { background-color: #000000; }
+        .color-brown { background-color: #552c03; }
+        .color-red { background-color: #fe0000; }
+        .color-orange { background-color: #ff8c00; }
+        .color-yellow { background-color: #fefe00; }
+        .color-green { background-color: #00c72b; }
+        .color-blue { background-color: #3B82F6; }
+        .color-violet { background-color: #8B5CF6; }
+        .color-gray { background-color: #9CA3AF; }
+        .color-white { background-color: #F9FAFB; }
+        .color-gold { background-color: #ffdd00; }
+        .color-silver { background-color: #C0C0C0; }
+        .color-none { background-color: transparent; box-shadow: none; }
